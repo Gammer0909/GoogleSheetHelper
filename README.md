@@ -51,4 +51,4 @@ public class Program {
 
 Thanks for using my project, I hope it helps you as much as it helped me!
 
-(c) 2023 - 2023, [Gammer0909]
+(c) 2023 - 2023, [Gammer0909](https://github.com/Gammer0909/)
