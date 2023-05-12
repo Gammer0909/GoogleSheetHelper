@@ -1,4 +1,4 @@
-﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
@@ -12,13 +12,15 @@ namespace GoogleSheet.Helper;
 
 class GoogleSheetHelper {
 
+    // these are needed to init. the google sheets service
     static string[] Scopes = { SheetsService.Scope.Spreadsheets };
     static string ApplicationName = "GoogleSheetHelper";
     static string SheetID = "";
     static string credentials = "";
     static GoogleCredential c;
     SheetsService service;
-
+    
+    // Constructor
     public GoogleSheetHelper(string sheetID, string credentialsPath, string applicationName) {
 
         SheetID = sheetID;
@@ -28,36 +30,38 @@ class GoogleSheetHelper {
         service = InitializeSheetsService();
 
     }
-
+    
+    // This is a more complex method, stay with me
     public bool WriteToCell(string writeValue, string index) {
 
-        var service = new SheetsService(new BaseClientService.Initializer() {
+        var service = new SheetsService(new BaseClientService.Initializer() { // Make a new SheetService
 
             HttpClientInitializer = c,
             ApplicationName = ApplicationName,
 
         });
 
-        var range = new ValueRange();
+        var range = new ValueRange(); // the Value range to search the Sheet for
         var objectList = new List<object>() { writeValue };
         range.Values = new List<IList<object>> { objectList };
-        var r = service.Spreadsheets.Values.Update(range, SheetID, index);
-        r.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+        var r = service.Spreadsheets.Values.Update(range, SheetID, index); // Get to the Sheet with the given ID
+        r.ValueInputOption = SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED; // Actually, I have no idea what this does
         
         try {
 
-            var response = r.Execute();
+            var response = r.Execute(); // Write to the sheet
 
-        } catch (Google.GoogleApiException e) {
-
+        } catch (Google.GoogleApiException e) { // If you cannot write to the sheet for some reason...
+			
+			// Print the Error message, Status code, and Error values.
             Console.WriteLine("Error updating values: {0}", e.Message);
             Console.WriteLine("Error status code: {0}", e.Error.Code);
             Console.WriteLine("Error message: {0}", e.Error.Message);
-            return false;
+            return false; // Return false
         }
-        return true;
+        return true; // If you did write to the sheet, return true
     }
-
+	
     public string? SearchAtIndex(string searchFor, string indexRange) {
 
         var service = new SheetsService(new BaseClientService.Initializer() {
